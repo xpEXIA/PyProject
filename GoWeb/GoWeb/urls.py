@@ -15,13 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api import interface
+from api import WebPageInterface as wpi
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pageA/', interface.pageA),
+    path('pageA/', wpi.pageA),
+    path('aJaxTest/', wpi.aJaxTest),
+    path('pageB/', wpi.pageB),
 ]
 
 
