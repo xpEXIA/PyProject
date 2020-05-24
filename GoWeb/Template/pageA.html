@@ -8,7 +8,7 @@
 
 <body>
     <a>hello world</a>
-    <p>{{ name }}</p>
+    <p>{{ time }}</p>
     <table>
         {% for item in dota %}
             <tr>
@@ -18,5 +18,40 @@
             </tr>
         {% endfor %}
     </table>
+    <form>
+        <p>
+            <select name="test_id">
+                {% for hero in dota %}
+                    <option value="{{ hero.id }}">{{ hero.role }}</option>
+                {% endfor %}
+            </select>
+        </p>
+    </form>
+    <p>
+        <input id="'title" type="text" name="title" />
+    </p>
+    <input type="button" value="提交" onclick="AjaxSend();" />
+    
+    <script src="/Static/jquery-3.5.1.js"></script>
+    <script>
+        function AjaxSend() {
+            $.ajax(
+                {
+                    url: '/aJaxTest/',
+                    type:'POST',
+                    data:{'title': $('#title').val()},
+                    success: function (data) {
+                        console.log($('#title').val())
+                        console.log(data)
+                        if(data == '0'){
+                            location.href='/pageB/';
+                        }else{
+                            $('#errormsg').text(data);
+                        }
+                    }
+                }
+            )
+        }
+    </script>
 </body>
 </html>
