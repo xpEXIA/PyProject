@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PageA_test</title>
+</head>
+
+
+<body>
+    <a>hello world</a>
+    <p>{{ name }}</p>
+    <table>
+        {% for item in dota %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{ item.position }}</td>
+                <td>{{ item.role }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
