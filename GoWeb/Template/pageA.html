@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>PageA_test</title>
+    <script src="/Static/jquery-3.5.1.js"></script>
 </head>
 
 
@@ -28,20 +29,20 @@
         </p>
     </form>
     <p>
-        <input id="'title" type="text" name="title" />
+        <input id="input_id" type="text" name="title" />
     </p>
     <input type="button" value="提交" onclick="AjaxSend();" />
-    
-    <script src="/Static/jquery-3.5.1.js"></script>
+    <a>hahahkkkkkk</a>
+
     <script>
         function AjaxSend() {
             $.ajax(
                 {
                     url: '/aJaxTest/',
                     type:'POST',
-                    data:{'title': $('#title').val()},
+                    data:{'title': $('#input_id').val()},
                     success: function (data) {
-                        console.log($('#title').val())
+                        console.log($('#input_id').val())
                         console.log(data)
                         if(data == '0'){
                             location.href='/pageB/';
