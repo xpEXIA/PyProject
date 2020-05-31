@@ -33,3 +33,7 @@ def aJaxTest(request):
         return HttpResponse('0')
     else:
         return HttpResponse('你个智障')
+
+def windowclose(request):
+
+    return render(request, 'windowclose.html')
