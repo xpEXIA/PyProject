@@ -24,6 +24,7 @@ urlpatterns = [
     path('pageA/', wpi.pageA),
     path('aJaxTest/', wpi.aJaxTest),
     path('pageB/', wpi.pageB),
+    path('windowclose/', wpi.windowclose)
 ]
 
 
