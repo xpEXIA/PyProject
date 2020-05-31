@@ -211,7 +211,20 @@ LOGGING = {
 
 import logging
 logger = logging.getLogger('mdjango')
-logSql = logging.getLogger('sql')
+# logSql = logging.getLogger('sql')
+
+
+# mysql confing
+
+MYSQL_CONFING = {
+    'host':'localhost',
+    'user':'root',
+    'password':'root',
+    'port':3303,
+    'database':'goweb',
+    'charset':'utf8mb4',
+    'cursorclass':'pymysql.cursors.DictCursor'
+}
 
 
 
