@@ -23,7 +23,7 @@ class MysqlExecute():
 
         self.con = pymysql.connect(host=set['host'],user=set['user_name'],password=set['password'],
                                    port=set['port'],database=set['database'],charset=set['charset'],
-                                   cursorclass=set['pymysql.cursors.DictCursor'])
+                                   cursorclass=pymysql.cursors.DictCursor)
         self.cursor = self.con.cursor()
 
     def success(self,type):

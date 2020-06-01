@@ -220,7 +220,7 @@ MYSQL_CONFING = {
     'host':'localhost',
     'user':'root',
     'password':'root',
-    'port':3303,
+    'port':3306,
     'database':'goweb',
     'charset':'utf8mb4',
     'cursorclass':'pymysql.cursors.DictCursor'
