@@ -46,11 +46,13 @@ class MysqlExecute():
 
         self.cursor.execute(sql,args)
         self.con.commit()
+        return self.cursor.lastrowid
 
     def multiple_modify(self,sql,args):
 
         self.cursor.executemany(sql,args)
         self.con.commit()
+        return self.cursor.rowcount
 
     def create(self,sql,args):
 
@@ -63,4 +65,4 @@ class MysqlExecute():
         self.cursor.close()
         self.con.close()
 
-mysqlExe = MysqlExecute()
+mysqlexe = MysqlExecute()
