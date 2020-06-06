@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api import WebPageInterface as wpi
+from api import webpageinterface as wpi
 
 
 
@@ -24,6 +24,7 @@ urlpatterns = [
     path('pageA/', wpi.pageA),
     path('aJaxTest/', wpi.aJaxTest),
     path('pageB/', wpi.pageB),
+    path('windowclose/', wpi.windowclose)
 ]
 
 
