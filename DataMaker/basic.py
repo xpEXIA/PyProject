@@ -3,7 +3,7 @@
 # python 3.6.4
 
 import random
-
+from datetime import datetime, timedelta
 
 
 def sysSeries(length,data_list):
@@ -15,6 +15,8 @@ def sysSeries(length,data_list):
         [['a',2],['b',3]]
     :return: list
     """
+
+    assert length == int(length), 'length must be int'
 
     sum_num = 0
     for i in data_list:
@@ -38,16 +40,26 @@ def oriSeries(length,data_list):
     :return: list
     """
 
-    ori_list =[]
+    ori_list=[]
     for i in data_list:
         random_var = random.randint(1,100)
         inter_var = [i,random_var]
         ori_list.append(inter_var)
-    return sysList(length=length,data_list=ori_list)
+    return sysSeries(length=length,data_list=ori_list)
 
 
 def digitSeries(length,type,begin,end):
 
+    """
+    形成数字数据列表
+    :param length: int 列表长度
+    :param type: int/float 指定连续数列数据类型
+    :param begin: int/float 起始数字
+    :param end: int/float 终点数字
+    :return: list
+    """
+
+    assert type in ['int','float'], 'type must be int or float'
 
     result=[]
     if type == 'int':
@@ -57,4 +69,51 @@ def digitSeries(length,type,begin,end):
         for i in list(range(length)):
             result.append(random.uniform(begin,end))
     return result
+
+
+def _dateSeries(length,type,continues,begin,end):
+
+    """
+    获得日期数据列表
+    :param length: int 列表长度
+    :param type: date/datetime/timestamp 指定日期格式
+        date: %Y/%m/%d
+        datetime: %Y/%m/%d %H:%M:%S
+    :param continues: boolean 日期是否连续
+        :type: date 按天连续
+        :type: datetime 按小时连续
+    :param begin: str 起始日期
+    :param end: str 结束日期
+    :return: list
+    """
+
+    assert type in ['date','datetime','timestamp'], 'type must be date/datetime/timestamp'
+
+    date_list = []
+    if type == 'date':
+        date_interval = datetime.strptime(end,'%Y/%m/%d') - datetime.strptime(begin,'%Y/%m/%d')
+        for i in list(range(date_interval.days + 1)):
+            date = datetime.strptime(begin, '%Y/%m/%d') + timedelta(days=i)
+            date_list.append(datetime.strftime(date, '%Y/%m/%d'))
+        if continues is False:
+            date_list = random.sample(date_list, random.randint(int(len(date_list) / 2),date_interval.days)).sort()
+        return oriSeries(length=length,data_list=date_list)
+    elif type == 'datetime':
+        date_interval = datetime.strptime(end, '%Y/%m/%d %H:%M:%S') - datetime.strptime(begin, '%Y/%m/%d %H:%M:%S')
+        hour_interval = date_interval.days * 24 + int(date_interval.seconds / 3600)
+        second_interval = date_interval.seconds % 3600
+        for i in list(range(hour_interval + 1)):
+            date = datetime.strptime(begin, '%Y/%m/%d %H:%M:%S') + timedelta(hours=i)
+            date_list.append(datetime.strftime(date, '%Y/%m/%d %H:%M:%S'))
+        if continues is False:
+            date_list = random.sample(date_list, random.randint(int(len(date_list) / 2), date_interval.days)).sort()
+        result = oriSeries(length=length, data_list=date_list)
+        a = [datetime.strptime(x, '%Y/%m/%d %H:%M:%S') + timedelta(seconds=random.randint(0,3600))
+             for i in result if x != date_list[-1]]
+        b = [datetime.strptime(x, '%Y/%m/%d %H:%M:%S') + timedelta(seconds=random.randint(0,second_interval))
+             for i in result if x == date_list[-1]]
+        result = a.extend(b)
+        return result.sort()
+    elif type == 'timestamp':
+        return digitSeries(length=length,type='float',begin=begin,end=end)
 
