@@ -26,17 +26,22 @@ class MysqlExecute():
                                    cursorclass=pymysql.cursors.DictCursor)
         self.cursor = self.con.cursor()
 
-    def success(self,type):
+    def callBack(self,type='single'):
 
-        self.cursor.execute('select last_insert_id()')
+        if type == 'multiple' and self.cursor.rowcount:
+            return self.cursor.rowcount
+        elif self.cursor.lastrowid:
+            return self.cursor.lastrowid
+        else:
+            return False
 
-    def get_table(self,sql,args):
+    def getTable(self,sql,args):
 
         self.cursor.execute(sql,args)
         result = self.cursor.fetchall()
         return result
 
-    def get_row(self,sql,args):
+    def getRow(self,sql,args):
 
         self.cursor.execute(sql, args)
         result = self.cursor.fetchone()
@@ -46,19 +51,19 @@ class MysqlExecute():
 
         self.cursor.execute(sql,args)
         self.con.commit()
-        return self.cursor.lastrowid
+        return callBack()
 
-    def multiple_modify(self,sql,args):
+    def multiModify(self,sql,args):
 
         self.cursor.executemany(sql,args)
         self.con.commit()
-        return self.cursor.rowcount
+        return callBack(type='multiple')
 
     def create(self,sql,args):
 
         self.cursor.execute(sql,args)
         self.con.commit()
-        return self.cursor.lastrowid
+        return callBack()
 
     def close(self):
 
