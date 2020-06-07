@@ -12,7 +12,7 @@ def sysSeries(length,data_list):
     根据分配的比例形成随机列表
     :param length: int 列表长度
     :param data_list: list 数据列表
-        [['a',2],['b',3]]
+        [['a',2],['b',3]] 根据为每个字符串指定的数字比例形成数据
     :return: list
     """
 
@@ -117,3 +117,65 @@ def _dateSeries(length,type,continues,begin,end):
     elif type == 'timestamp':
         return digitSeries(length=length,type='float',begin=begin,end=end)
 
+
+def sysRelatedSeries(length,data_dict):
+
+    """
+    获取具有对应关系的两列数组
+    :param length: int 列表长度
+    :param data_dict: dict 以字典形式传递
+         {'a':[['q',3],['w',5]], 'b':[['e',5],['t',8]]} 根据为每个字符串指定的数字比例形成数据
+    :return: list
+    """
+
+    assert length == int(length), 'length must be int'
+
+    sum_num = 0
+    for i in data_dict:
+        for x in data_dict[i]:
+            sum_num += x[1]
+    result=[]
+    for i in data_dict:
+        inter_num = 0
+        inter_result=[]
+        for x in data_dict[i]:
+            inter_num += x[1]
+        inter_list = sysSeries(length=round(inter_num * length / sum_num), data_list=data_dict[i])
+        for y in inter_list:
+            inter_result.append([[i,y]])
+        result.extend(inter_result)
+    random.shuffle(result)
+    while len(result) > length:
+        result.pop()
+    return result
+
+
+def oriRelatedSeries(length,data_dict):
+
+    """
+    获取具有对应关系的两列数组
+    :param length: int 列表长度
+    :param data_dict: dict 以字典形式传递
+        {'a':['q','w'], 'b':['e','t']}
+    :return: list
+    """
+
+    random_length=[]
+    random_length_sum = 0
+    for i in data_dict:
+        random_var = random.randint(1,100)
+        random_length.append(random_var)
+        random_length_sum += random_var
+
+    result=[]
+    for i in data_dict:
+        inter_list = oriSeries(length=round(random_length.pop() / random_length_sum * length),
+                               data_list=data_dict[i])
+        inter_result=[]
+        for x in inter_list:
+            inter_result.append([i,x])
+        result.extend(inter_result)
+    random.shuffle(result)
+    while len(result) > length:
+        result.pop()
+    return result

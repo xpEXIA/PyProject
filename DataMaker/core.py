@@ -12,7 +12,8 @@ def discreteSeries(length=0,systematic=False,data_list=[]):
     :param length: int 列表长度
     :param systematic: boolean 是否指定单一数据形成量
     :param data_list: list 以列表形式传递数据
-       systematic=True: [['a',2],['b',3]]
+       systematic=True: [['a',2],['b',3]] 根据为每个字符串指定的数字比例形成数据
+       systematic=False: ['a','b']
     :return: list
     """
 
@@ -46,8 +47,8 @@ def dateSeries(length=0,type='date',continues=True,begin='',end=''):
         date: %Y/%m/%d
         datetime: %Y/%m/%d %H:%M:%S
     :param continues: boolean 日期是否连续
-        :type: date 按天连续
-        :type: datetime 按小时连续
+        type: date 按天连续
+        type: datetime 按小时连续
     :param begin: str 起始日期
     :param end: str 结束日期
     :return: list
@@ -61,5 +62,27 @@ def dateSeries(length=0,type='date',continues=True,begin='',end=''):
     else:
         end_time = end
     return _dateSeries(length=length,type=type,continues=continues,begin=begin_time,end=end_time)
+
+
+def relatedSeries(length=0,systematic=False,data_dict={}):
+
+
+    """
+    获取具有对应关系的两列数组
+    :param length: int 列表长度
+    :param systematic: boolean 是否指定单一数据形成量
+    :param data_dict: dict 以字典形式传递
+        systematic: True {'a':[['q',3],['w',5]], 'b':[['e',5],['t',8]]} 根据为每个字符串指定的数字比例形成数据
+        systematic: False {'a':['q','w'], 'b':['e','t']}
+    :return: list
+    """
+    if systematic == True:
+        return sysRelatedSeries(length=length,data_dict=data_dict)
+    elif systematic == False:
+        return oriRelatedSeries(length=length,data_dict=data_dict)
+    else:
+        return False
+
+
 
 
