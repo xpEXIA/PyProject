@@ -160,6 +160,8 @@ def oriRelatedSeries(length,data_dict):
     :return: list
     """
 
+    assert length == int(length), 'length must be int'
+
     random_length=[]
     random_length_sum = 0
     for i in data_dict:
