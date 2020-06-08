@@ -21,7 +21,7 @@ def sysSeries(length,data_list):
     sum_num = 0
     for i in data_list:
         sum_num += i[1]
-    result=[]
+    result = []
     for i in data_list:
         result.extend([i[0]] * round(length * i[1] / sum_num))
     random.shuffle(result)
@@ -40,7 +40,9 @@ def oriSeries(length,data_list):
     :return: list
     """
 
-    ori_list=[]
+    assert isinstance(data_list, list), 'data must be list'
+
+    ori_list = []
     for i in data_list:
         random_var = random.randint(1,100)
         inter_var = [i,random_var]
@@ -48,26 +50,44 @@ def oriSeries(length,data_list):
     return sysSeries(length=length,data_list=ori_list)
 
 
-def digitSeries(length,type,begin,end):
+def digitSeries(length,type,distribution,begin,end,
+                low,high,mode,mu,sigma,lambd,kappa,alpha,beta):
 
     """
     形成数字数据列表
     :param length: int 列表长度
     :param type: int/float 指定连续数列数据类型
+    :param  distribution: 指定数据分布
     :param begin: int/float 起始数字
     :param end: int/float 终点数字
     :return: list
     """
 
+    distribution_dict = {
+        'None': random.uniform(begin,end),
+        'triangular': random.triangular(low, high, mode),
+        'normalvariate': random.normalvariate(mu, sigma),
+        'lognormvariate': random.lognormvariate(mu, sigma),
+        'expovariate': random.expovariate(lambd),
+        'vonmisesvariate': random.vonmisesvariate(mu, kappa),
+        'gammavariate': random.gammavariate(alpha, beta),
+        'gauss': random.gauss(mu, sigma),
+        'betavariate': random.betavariate(alpha,beta),
+        'paretovariate': random.paretovariate(alpha),
+        'weibullvariate': random.weibullvariate(alpha,beta)
+    }
     assert type in ['int','float'], 'type must be int or float'
+    if type == 'int' and type != 'None':
+        raise ValueError('distribution not attribute type int')
+    assert distribution in list(distribution_dict.keys()), 'The distribution is not supported'
 
-    result=[]
+    result = []
     if type == 'int':
         for i in list(range(length)):
            result.append(random.randint(begin,end))
     elif type == 'float':
         for i in list(range(length)):
-            result.append(random.uniform(begin,end))
+            result.append(distribution_dict[distribution])
     return result
 
 
@@ -132,12 +152,13 @@ def sysRelatedSeries(length,data_dict):
 
     sum_num = 0
     for i in data_dict:
+        assert isinstance(i, list), 'data must be list'
         for x in data_dict[i]:
             sum_num += x[1]
-    result=[]
+    result = []
     for i in data_dict:
         inter_num = 0
-        inter_result=[]
+        inter_result = []
         for x in data_dict[i]:
             inter_num += x[1]
         inter_list = sysSeries(length=round(inter_num * length / sum_num), data_list=data_dict[i])
@@ -162,7 +183,7 @@ def oriRelatedSeries(length,data_dict):
 
     assert length == int(length), 'length must be int'
 
-    random_length=[]
+    random_length = []
     random_length_sum = 0
     for i in data_dict:
         random_var = random.randint(1,100)
