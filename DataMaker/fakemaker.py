@@ -8,7 +8,7 @@ import pandas as pd
 from pandas import DataFrame
 
 
-def dataMaker(data_format):
+def dataMaker(data_format,output_type='DataFrame',path=None):
 
     """
     获取数据DataFrame或Series
@@ -60,7 +60,16 @@ def dataMaker(data_format):
         exec(i + '=' + operation + '(' + parameter + ')')
         exec(i + '=DataFrame(' + i + ',columns=' + name + ')')
         exec('result = pd.merge(result,' + i + ',how="left",left_index=True,right_index=True)')
-    return result
+
+    if output_type == 'excel':
+        result.to_excel(path, index=False)
+        return result
+    elif output_type == 'csv':
+        result.to_csv(path, index=False, encoding='GBK')
+        return result
+    else:
+        return result
+
 
 
 

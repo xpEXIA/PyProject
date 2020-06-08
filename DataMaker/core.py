@@ -3,6 +3,7 @@
 # python 3.6.4
 
 from DataMaker.basic import *
+from functools import wraps
 
 
 def discreteSeries(length=0,systematic=False,data_list=[]):
@@ -103,7 +104,6 @@ def relatedSeries(length=0,systematic=False,data_dict={}):
         return sysRelatedSeries(length=length,data_dict=data_dict)
     else:
         return oriRelatedSeries(length=length,data_dict=data_dict)
-
 
 
 

@@ -5,8 +5,20 @@
 
 # wogalsjdkjansd;cn;sav
 
-def add(x):
-    return x.append(4)
+def asd(z):
+    print('asd')
+    def qwe(a_func):
+        print('qwe')
+        def zxc(x,y):
+            print('zxc')
+            a = a_func(x,y) + z
+            return a
+        return zxc
+    return qwe
+
+@asd(z=3)
+def add(x,y):
+    return x + y
 
 
 class test():
@@ -20,7 +32,4 @@ class test():
 
 if __name__ == '__main__':
 
-    test = test([1,2,3])
-    print(test)
-    # b = test.add()
-    # print(b)
+    print(add(x=1,y=2))
