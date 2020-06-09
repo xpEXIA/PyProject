@@ -33,3 +33,4 @@ class test():
 if __name__ == '__main__':
 
     print(add(x=1,y=2))
+    print(add.__delattr__())

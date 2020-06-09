@@ -3,7 +3,8 @@
 # python 3.6.4
 
 from DataMaker.basic import *
-from functools import wraps
+from DataMaker.basic import _dateSeries
+
 
 
 def discreteSeries(length=0,systematic=False,data_list=[]):
@@ -20,12 +21,12 @@ def discreteSeries(length=0,systematic=False,data_list=[]):
     assert isinstance(data_list, list), 'data_list must be list'
 
     if systematic == True:
-        return sysSeries(length=length,data_list=data_list)
+        return sysSeries(length,data_list)
     else:
-        return oriSeries(length=length,data_list=data_list)
+        return oriSeries(length,data_list)
 
 
-def continuousSeries(length=0,type='int',distribution='None',begin=0,end=100,
+def continuousSeries(length=0,type='int',distribution='uniform',begin=0,end=100,
                      low=0,high=1,mode=None,mu=0,sigma=2,lambd=1,kappa=1,alpha=1,beta=1):
 
     """
@@ -35,17 +36,17 @@ def continuousSeries(length=0,type='int',distribution='None',begin=0,end=100,
     :param distribution: 指定数据分布，只有float能指定分布
         None为随机分布，
         distribution_dict = {
-        'None': random.uniform(begin,end),
-        'triangular': random.triangular(low=low, high=high, mode=mode),
-        'normalvariate': random.normalvariate(mu, sigma),
-        'lognormvariate': random.lognormvariate(mu, sigma),
-        'expovariate': random.expovariate(lambd),
-        'vonmisesvariate': random.vonmisesvariate(mu, kappa),
-        'gammavariate': random.gammavariate(alpha, beta),
-        'gauss': random.gauss(mu, sigma),
-        'betavariate': random.betavariate(alpha,beta),
-        'paretovariate': random.paretovariate(alpha),
-        'weibullvariate': random.weibullvariate(alpha,beta)
+        'None': random.uniform(begin,end), 随机分布
+        'triangular': random.triangular(low=low, high=high, mode=mode), 三角分布
+        'normalvariate': random.normalvariate(mu, sigma), 正态分布
+        'lognormvariate': random.lognormvariate(mu, sigma), 对数正态分布
+        'expovariate': random.expovariate(lambd), 指数分布
+        'vonmisesvariate': random.vonmisesvariate(mu, kappa), 卡帕分布
+        'gammavariate': random.gammavariate(alpha, beta), 伽马分布
+        'gauss': random.gauss(mu, sigma), 高斯分布
+        'betavariate': random.betavariate(alpha,beta), beta分布
+        'paretovariate': random.paretovariate(alpha), 帕累托分布
+        'weibullvariate': random.weibullvariate(alpha,beta) 威尔分布
         }
     :param begin: int/float 起始数字
     :param end: int/float 终点数字
@@ -101,9 +102,9 @@ def relatedSeries(length=0,systematic=False,data_dict={}):
     assert isinstance(data_dict, dict), 'data_dict must be dict'
 
     if systematic == True:
-        return sysRelatedSeries(length=length,data_dict=data_dict)
+        return sysRelatedSeries(length,data_dict)
     else:
-        return oriRelatedSeries(length=length,data_dict=data_dict)
+        return oriRelatedSeries(length,data_dict)
 
 
 

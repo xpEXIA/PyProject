@@ -4,8 +4,34 @@
 
 import random
 from datetime import datetime, timedelta
+from functools import wraps
 
 
+
+# 数据集取整函数
+# bug，由于列表复制采用round()方法，当出现0.5时会出现大量多于数据，暂时没想出好的方法避免
+def roundSeries(a_func):
+
+    @wraps(a_func)
+    def wrapper(length, data):
+
+        result = a_func(length,data)
+        if len(result) - length > 100:
+            result = result[0:-(len(result) - length)]
+        else:
+            while len(result) > length:
+                a = result.pop()
+                if a not in result:
+                    result.insert(a, 0)
+
+        if len(result) < length:
+            result.extend(result[0:(length - len(result))])
+            random.shuffle(result)
+        return result
+    return wrapper
+
+
+@roundSeries
 def sysSeries(length,data_list):
 
     """
@@ -21,12 +47,11 @@ def sysSeries(length,data_list):
     sum_num = 0
     for i in data_list:
         sum_num += i[1]
+
     result = []
     for i in data_list:
         result.extend([i[0]] * round(length * i[1] / sum_num))
     random.shuffle(result)
-    while len(result) > length:
-        result.pop()
     return result
 
 
@@ -42,12 +67,18 @@ def oriSeries(length,data_list):
 
     assert isinstance(data_list, list), 'data must be list'
 
-    ori_list = []
-    for i in data_list:
-        random_var = random.randint(1,100)
-        inter_var = [i,random_var]
-        ori_list.append(inter_var)
-    return sysSeries(length=length,data_list=ori_list)
+
+    if length > len(data_list):
+        ori_list = []
+        random_end = length / len(data_list)
+        for i in data_list:
+            random_var = random.uniform(1, random_end)
+            inter_var = [i, random_var]
+            ori_list.append(inter_var)
+        return sysSeries(length, ori_list)
+    else:
+        return random.sample(data_list,length)
+
 
 
 def digitSeries(length,type,distribution,begin,end,
@@ -62,9 +93,17 @@ def digitSeries(length,type,distribution,begin,end,
     :param end: int/float 终点数字
     :return: list
     """
-
+    """
+    采用字典获取对应函数，将分布函数字典形成配置的方法似乎代码量更多
+    而且还需要采用exec来执行，效率也会更低，就是写出来的东西，看起来好蠢……想想还有没有办法改进
     distribution_dict = {
-        'None': random.uniform(begin,end),
+        'uniform': {
+            'expr': '''
+                import random
+                value = ramdom.lognormvariate(mu,sigma)
+                ''',
+            'para':{'begin':begin,'end':end}
+        },
         'triangular': random.triangular(low, high, mode),
         'normalvariate': random.normalvariate(mu, sigma),
         'lognormvariate': random.lognormvariate(mu, sigma),
@@ -76,18 +115,53 @@ def digitSeries(length,type,distribution,begin,end,
         'paretovariate': random.paretovariate(alpha),
         'weibullvariate': random.weibullvariate(alpha,beta)
     }
+    """
+
+    distribution_list = ['uniform','normalvariate','lognormvariate','expovariate',
+        'vonmisesvariate','gammavariate','gauss','betavariate','paretovariate','weibullvariate']
     assert type in ['int','float'], 'type must be int or float'
     if type == 'int' and type != 'None':
         raise ValueError('distribution not attribute type int')
-    assert distribution in list(distribution_dict.keys()), 'The distribution is not supported'
+    assert distribution in list(distribution_list), 'The distribution is not supported'
 
     result = []
     if type == 'int':
         for i in list(range(length)):
            result.append(random.randint(begin,end))
     elif type == 'float':
-        for i in list(range(length)):
-            result.append(distribution_dict[distribution])
+        if distribution == 'uniform':
+            for i in list(range(length)):
+                result.append(random.uniform(begin,end))
+        elif distribution == 'triangular':
+            for i in list(range(length)):
+                result.append(random.triangular(low, high, mode))
+        elif distribution == 'normalvariate':
+            for i in list(range(length)):
+                result.append(random.normalvariate(mu, sigma))
+        elif distribution == 'lognormvariate':
+            for i in list(range(length)):
+                result.append(random.lognormvariate(mu, sigma))
+        elif distribution == 'expovariate':
+            for i in list(range(length)):
+                result.append(random.expovariate(lambd))
+        elif distribution == 'vonmisesvariate':
+            for i in list(range(length)):
+                result.append(random.vonmisesvariate(mu, kappa))
+        elif distribution == 'gammavariate':
+            for i in list(range(length)):
+                result.append(random.gammavariate(alpha, beta))
+        elif distribution == 'gauss':
+            for i in list(range(length)):
+                result.append(random.gauss(mu, sigma))
+        elif distribution == 'betavariate':
+            for i in list(range(length)):
+                result.append(random.betavariate(alpha,beta))
+        elif distribution == 'paretovariate':
+            for i in list(range(length)):
+                result.append(random.paretovariate(alpha))
+        elif distribution == 'weibullvariate':
+            for i in list(range(length)):
+                result.append(random.weibullvariate(alpha,beta))
     return result
 
 
@@ -135,9 +209,10 @@ def _dateSeries(length,type,continues,begin,end):
         result = a.extend(b)
         return result.sort()
     elif type == 'timestamp':
-        return digitSeries(length=length,type='float',begin=begin,end=end)
+        return digitSeries(length=length,type='float',distribution='random',begin=begin,end=end)
 
 
+@roundSeries
 def sysRelatedSeries(length,data_dict):
 
     """
@@ -155,22 +230,22 @@ def sysRelatedSeries(length,data_dict):
         assert isinstance(i, list), 'data must be list'
         for x in data_dict[i]:
             sum_num += x[1]
+
     result = []
     for i in data_dict:
         inter_num = 0
         inter_result = []
         for x in data_dict[i]:
             inter_num += x[1]
-        inter_list = sysSeries(length=round(inter_num * length / sum_num), data_list=data_dict[i])
+        inter_list = sysSeries(round(inter_num * length / sum_num), data_dict[i])
         for y in inter_list:
             inter_result.append([[i,y]])
         result.extend(inter_result)
     random.shuffle(result)
-    while len(result) > length:
-        result.pop()
     return result
 
 
+@roundSeries
 def oriRelatedSeries(length,data_dict):
 
     """
@@ -192,13 +267,11 @@ def oriRelatedSeries(length,data_dict):
 
     result=[]
     for i in data_dict:
-        inter_list = oriSeries(length=round(random_length.pop() / random_length_sum * length),
-                               data_list=data_dict[i])
+        inter_list = oriSeries(round(random_length.pop() / random_length_sum * length),
+                               data_dict[i])
         inter_result=[]
         for x in inter_list:
             inter_result.append([i,x])
         result.extend(inter_result)
     random.shuffle(result)
-    while len(result) > length:
-        result.pop()
     return result
