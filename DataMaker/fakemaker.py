@@ -8,7 +8,7 @@ import pandas as pd
 from pandas import DataFrame
 
 
-def dataMaker(data_format,output_type='DataFrame',path=None,orient='columns'):
+def dataMaker(data_format):
 
     """
     获取数据DataFrame或Series
@@ -70,17 +70,44 @@ def dataMaker(data_format,output_type='DataFrame',path=None,orient='columns'):
         # 在使用exec执行代码时，字符串代码中的内部变量无法在函数中被调用，
         # 想要调用需要使用locals()方法找到exec中的内部变量
         result = pd.merge(result, locals()[i],how='left',left_index=True,right_index=True)
+    return result
 
-    if output_type == 'excel':
-        result.to_excel(path, index=False)
-        return result
-    elif output_type == 'csv':
-        result.to_csv(path, index=False, encoding='GBK')
-        return result
-    elif output_type == 'json':
-        return result.to_json(orient=orient,index=False)
-    else:
-        return result
+def dataMerge(origin,merge_data,type,index,name):
+
+
+
+    merge_dict = {}
+    data = origin.groupby(index)[index].count()
+    if type == 'discrete':
+        for i in merge_data:
+            merge_dict[i] = discreteSeries(data[i],systematic,merge_data[i])
+    elif type == 'continuous':
+        for i in list(data.index):
+            for x in merge_data[i]:
+                if isinstance(data_format[i][x], str):
+                    parameter = parameter + x + '="' + str(data_format[i][x]) + '",'
+                else:
+                    parameter = parameter + x + '=' + str(data_format[i][x]) + ','
+            exec(i + '=continuousSeries(length=' + str(data[i]) + ',' + parameter + ')')
+            merge_dict[i] = locals()[i]
+    elif type == 'date':
+        for i in list(data.index):
+            for x in merge_data[i]:
+                if isinstance(data_format[i][x], str):
+                    parameter = parameter + x + '="' + str(data_format[i][x]) + '",'
+                else:
+                    parameter = parameter + x + '=' + str(data_format[i][x]) + ','
+            exec(i + '=dateSeries(length=' + str(data[i]) + ',' + parameter + ')')
+            merge_dict[i] = locals()[i]
+    origin[name] = origin[index].map(lambda x: merge_dict[x].pop())
+
+
+
+
+
+
+
+
 
 
 
@@ -88,8 +115,7 @@ if __name__ == '__main__':
 
 
     from DataMaker.settings import PHONE_SAMPLE
-    phone_sample = dataMaker(PHONE_SAMPLE,output_type='excel',
-                             path='D:/360MoveData/Users/Administrator/Desktop/临时工/phone.xlsx')
+    phone_sample = dataMaker(PHONE_SAMPLE)
 
 
 
