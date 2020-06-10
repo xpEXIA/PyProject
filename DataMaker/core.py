@@ -3,7 +3,6 @@
 # python 3.6.4
 
 from DataMaker.basic import *
-from DataMaker.basic import _dateSeries
 
 
 
@@ -83,7 +82,7 @@ def dateSeries(length=0,type='date',continues=True,begin='',end=''):
         end_time = datetime.strftime(datetime.now() + timedelta(days=9),'%Y/%m/%d')
     else:
         end_time = end
-    return _dateSeries(length=length,type=type,continues=continues,begin=begin_time,end=end_time)
+    return dateSeriesMaker(length=length,type=type,continues=continues,begin=begin_time,end=end_time)
 
 
 def relatedSeries(length=0,systematic=False,data_dict={}):

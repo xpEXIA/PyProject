@@ -4,6 +4,7 @@
 
 
 from DataMaker.core import *
+from DataMaker.basic import paramterString
 import pandas as pd
 from pandas import DataFrame
 
@@ -44,11 +45,7 @@ def dataMaker(data_format):
                 'end': '2020/06/30'
             }
         }
-    :param output_type 指定数据输出格式
-        DataFrame/excel/csv/json
-    :param path 指定excel和csv保存路径
-    :param orient 指定json输出格式
-    :return DataFrame Series
+    :return DataFrame
     """
 
     assert isinstance(data_format, dict), 'data_format must be dict'
@@ -58,12 +55,7 @@ def dataMaker(data_format):
     for i in data_format:
         name = data_format[i].pop('name')
         operation = data_format[i].pop('operation')
-        parameter = ''
-        for x in data_format[i]:
-            if isinstance(data_format[i][x],str):
-                parameter = parameter + x + '="' + str(data_format[i][x]) + '",'
-            else:
-                parameter = parameter + x + '=' + str(data_format[i][x]) + ','
+        parameter = paramterString(data_format[i])
         exec(i + '=' + operation + '(length=' + str(length) + ',' + parameter + ')')
         exec(i + '=DataFrame(' + i + ',columns=' + str(name) + ')')
 
@@ -72,36 +64,65 @@ def dataMaker(data_format):
         result = pd.merge(result, locals()[i],how='left',left_index=True,right_index=True)
     return result
 
-def dataMerge(origin,merge_data,type,index,name):
+def dataMerge(origin,merge_data):
 
+    """
+    向已有数据集合并指定规则的数据集
+    :param origin:  DataFrame 原数据集
+    :param merge_data:  dict 指定数据格式
+        merge_data = {
+            'columnA':{
+                'index': 'columnA_name', 指定origin中合并的列
+                'name': 'nameA',
+                'operation': 'discreteSeries',
+                'param': {
+                    'a':{
+                        'systematic': False,
+                        'data': ['a','b','c']
+                    },
+                    'b':{
+                        'systematic': True,
+                        'data': [['q',6],['w',7],['e',3]]
+                    }
+                }
+            },
+            'columnB':{
+                'index': 'columnB_name',
+                'name': 'nameB',
+                'operation': 'continuousSeries',
+                'param': {
+                    'type': 'int',
+                    'begin': 0,
+                    'end': 100
+                }
+            },
+            'columnC':{
+                'index': 'columnC_name',
+                'name': 'nameC',
+                'operation': 'dateSeries',
+                'param': {
+                    'type': 'date',
+                    'continues': True,
+                    'begin': '2020/06/10',
+                    'end': '2020/06/30'
+                }
+            }
+        }
+    :return:  DataFrame
+    """
 
+    assert isinstance(merge_data, dict), 'data_format must be dict'
 
-    merge_dict = {}
-    data = origin.groupby(index)[index].count()
-    if type == 'discrete':
-        for i in merge_data:
-            merge_dict[i] = discreteSeries(data[i],systematic,merge_data[i])
-    elif type == 'continuous':
-        for i in list(data.index):
-            for x in merge_data[i]:
-                if isinstance(data_format[i][x], str):
-                    parameter = parameter + x + '="' + str(data_format[i][x]) + '",'
-                else:
-                    parameter = parameter + x + '=' + str(data_format[i][x]) + ','
-            exec(i + '=continuousSeries(length=' + str(data[i]) + ',' + parameter + ')')
-            merge_dict[i] = locals()[i]
-    elif type == 'date':
-        for i in list(data.index):
-            for x in merge_data[i]:
-                if isinstance(data_format[i][x], str):
-                    parameter = parameter + x + '="' + str(data_format[i][x]) + '",'
-                else:
-                    parameter = parameter + x + '=' + str(data_format[i][x]) + ','
-            exec(i + '=dateSeries(length=' + str(data[i]) + ',' + parameter + ')')
-            merge_dict[i] = locals()[i]
-    origin[name] = origin[index].map(lambda x: merge_dict[x].pop())
-
-
+    result = origin.copy()
+    for i in merge_data:
+        merge_dict = {}
+        data_length = result.groupby(merge_data[i]['index'])[merge_data[i]['index']].count()
+        for x in list(data_length.index):
+            parameter = paramterString(merge_data[i]['param'])
+            exec(x + '=' + merge_data[i]['operation'] + '(length=' + str(data_length[x]) + ',' + parameter + ')')
+            merge_dict[x] = locals()[x]
+        result[merge_data[i]['name']] = result[merge_data[i]['index']].map(lambda x: merge_dict[x].pop())
+    return result
 
 
 

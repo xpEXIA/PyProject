@@ -165,7 +165,15 @@ def digitSeries(length,type,distribution,begin,end,
     return result
 
 
-def _dateSeries(length,type,continues,begin,end):
+def dateSeriesMaker(length,type,continues,begin,end):
+
+    # 调用日期数据集获取类获取日期数据集
+
+    date = _dateSeries(length,type,continues,begin,end)
+    return date.getResult()
+
+
+class _dateSeries():
 
     """
     获得日期数据列表
@@ -183,33 +191,56 @@ def _dateSeries(length,type,continues,begin,end):
 
     assert type in ['date','datetime','timestamp'], 'type must be date/datetime/timestamp'
 
-    date_list = []
-    if type == 'date':
-        date_interval = datetime.strptime(end,'%Y/%m/%d') - datetime.strptime(begin,'%Y/%m/%d')
+    def __index__(self,length,type,continues,begin,end):
+
+        self.length = length
+        self.type = type
+        self.continues = continues
+        self.begin = begin
+        self.end = end
+
+    def dateSeries(self):
+
+        date_list = []
+        date_interval = datetime.strptime(self.end, '%Y/%m/%d') - datetime.strptime(self.begin, '%Y/%m/%d')
         for i in list(range(date_interval.days + 1)):
-            date = datetime.strptime(begin, '%Y/%m/%d') + timedelta(days=i)
+            date = datetime.strptime(self.begin, '%Y/%m/%d') + timedelta(days=i)
             date_list.append(datetime.strftime(date, '%Y/%m/%d'))
-        if continues is False:
-            date_list = random.sample(date_list, random.randint(int(len(date_list) / 2),date_interval.days)).sort()
-        return oriSeries(length=length,data_list=date_list)
-    elif type == 'datetime':
-        date_interval = datetime.strptime(end, '%Y/%m/%d %H:%M:%S') - datetime.strptime(begin, '%Y/%m/%d %H:%M:%S')
+        if self.continues is False:
+            date_list = random.sample(date_list, random.randint(int(len(date_list) / 2), date_interval.days)).sort()
+        return oriSeries(length=self.length, data_list=date_list)
+
+    def datetimeSeries(self):
+
+        date_list = []
+        date_interval = datetime.strptime(self.end, '%Y/%m/%d %H:%M:%S') - datetime.strptime(self.begin, '%Y/%m/%d %H:%M:%S')
         hour_interval = date_interval.days * 24 + int(date_interval.seconds / 3600)
         second_interval = date_interval.seconds % 3600
         for i in list(range(hour_interval + 1)):
-            date = datetime.strptime(begin, '%Y/%m/%d %H:%M:%S') + timedelta(hours=i)
+            date = datetime.strptime(self.begin, '%Y/%m/%d %H:%M:%S') + timedelta(hours=i)
             date_list.append(datetime.strftime(date, '%Y/%m/%d %H:%M:%S'))
-        if continues is False:
+        if self.continues is False:
             date_list = random.sample(date_list, random.randint(int(len(date_list) / 2), date_interval.days)).sort()
-        result = oriSeries(length=length, data_list=date_list)
-        a = [datetime.strptime(x, '%Y/%m/%d %H:%M:%S') + timedelta(seconds=random.randint(0,3600))
+        result = oriSeries(length=self.length, data_list=date_list)
+        a = [datetime.strptime(x, '%Y/%m/%d %H:%M:%S') + timedelta(seconds=random.randint(0, 3600))
              for i in result if x != date_list[-1]]
-        b = [datetime.strptime(x, '%Y/%m/%d %H:%M:%S') + timedelta(seconds=random.randint(0,second_interval))
+        b = [datetime.strptime(x, '%Y/%m/%d %H:%M:%S') + timedelta(seconds=random.randint(0, second_interval))
              for i in result if x == date_list[-1]]
         result = a.extend(b)
         return result.sort()
-    elif type == 'timestamp':
-        return digitSeries(length=length,type='float',distribution='random',begin=begin,end=end)
+
+    def timestampSeries(self):
+
+        return digitSeries(length=self.length, type='float', distribution='uniform', begin=self.begin, end=self.end)
+
+    def getResult(self):
+        if self.type == 'date':
+            result = self.dateSeries()
+        elif self.type == 'datetime':
+            result = self.datetimeSeries()
+        elif self.type == 'timestamp':
+            result = self.timestampSeries()
+        return result
 
 
 @roundSeries
@@ -275,3 +306,20 @@ def oriRelatedSeries(length,data_dict):
         result.extend(inter_result)
     random.shuffle(result)
     return result
+
+
+def paramterString(param_dict):
+
+    """
+    将参数字典转换为字符串，用户exec执行
+    :param param_dict: dict 参数字典
+    :return: str
+    """
+
+    parameter = ''
+    for x in param_dict:
+        if isinstance(param_dict[x], str):
+            parameter = parameter + x + '="' + str(param_dict[x]) + '",'
+        else:
+            parameter = parameter + x + '=' + str(param_dict[x]) + ','
+    return parameter

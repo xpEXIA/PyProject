@@ -31,8 +31,15 @@ class test():
     def add(self):
         return  self.a +1
 
+    def result(self):
+
+        c = self.add() + self.b
+        return c
+
 if __name__ == '__main__':
 
     a = test(1)
-    b = a.add()
+    c = a.add()
+    print(c)
+    b = a.result()
     print(b)
