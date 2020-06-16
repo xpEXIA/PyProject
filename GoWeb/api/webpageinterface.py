@@ -28,7 +28,7 @@ def pageA(request):
 
 def pageB(request):
 
-    return render(request, 'pageB.html')
+    return render(request, 'login.html')
 
 
 def aJaxTest(request):
@@ -42,3 +42,6 @@ def aJaxTest(request):
 def windowclose(request):
 
     return render(request, 'windowclose.html')
+
+def layouts(request):
+    return render(request, 'layouts.html')
