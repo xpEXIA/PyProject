@@ -39,7 +39,7 @@ class test():
 if __name__ == '__main__':
 
     a = test(1)
-    c = a.add()
+    c = a.add
+    d = c()
     print(c)
-    b = a.result()
-    print(b)
+    print(d)
