@@ -54,7 +54,7 @@ ROOT_URLCONF = 'GoWeb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'Template')],
+        'DIRS': [os.path.join(BASE_DIR, 'Template')], #更改html母版目录
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,7 +119,7 @@ USE_TZ = True
 
 STATIC_URL = '/Static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'Static'),
+    os.path.join(BASE_DIR, 'Static'), # 更改静态文件目录
 )
 
 # log set info

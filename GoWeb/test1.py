@@ -36,6 +36,20 @@ class test():
         c = self.add() + self.b
         return c
 
+    def add_one(self,a):
+
+        return a + 1
+
+    def arg(self,*args,**kwargs):
+
+        h = 0
+        for i in kwargs:
+            h = h + kwargs[i]
+        for i in args:
+            h = h + i
+        return h
+
+
 if __name__ == '__main__':
 
     a = test(1)
@@ -43,3 +57,4 @@ if __name__ == '__main__':
     print(c)
     b = a.result()
     print(b)
+    print(a.arg(5,8))

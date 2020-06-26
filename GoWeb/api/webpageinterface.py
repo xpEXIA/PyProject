@@ -16,19 +16,19 @@ def pageA(request):
     logger.debug('真能用？？？？？？？')
     return render(request,
                   'pageA.html',
-                  {'time':datetime.now(),
-                   'dota':[
-                       {'id':'1','position':'carry','role':'luna'},
-                       {'id':'2','position':'mid','role':'strom'},
-                       {'id':'3','position':'surport','role':'shadowHunt'},
-                   ]
-                   }
+                  # {'time':datetime.now(),
+                  #  'dota':[
+                  #      {'id':'1','position':'carry','role':'luna'},
+                  #      {'id':'2','position':'mid','role':'strom'},
+                  #      {'id':'3','position':'surport','role':'shadowHunt'},
+                  #  ]
+                  #  }
                   )
 
 
 def pageB(request):
 
-    return render(request, 'pageB.html')
+    return render(request, 'pageA.html')
 
 
 def aJaxTest(request):
@@ -42,3 +42,7 @@ def aJaxTest(request):
 def windowclose(request):
 
     return render(request, 'windowclose.html')
+
+def testAsd(x):
+
+    return x + 1

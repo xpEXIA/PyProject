@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from api import webpageinterface as wpi
 
 
@@ -23,8 +23,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('pageA/', wpi.pageA),
     path('aJaxTest/', wpi.aJaxTest),
-    path('pageB/', wpi.pageB),
-    path('windowclose/', wpi.windowclose)
+    # path('pageB/', wpi.pageB),
+    path('windowclose/', wpi.windowclose),
+    re_path(r'pageB/\d+',wpi.pageB),
+    re_path(r'',wpi.pageB),
+
 ]
 
 
