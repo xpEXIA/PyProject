@@ -19,15 +19,14 @@ from api import webpageinterface as wpi
 
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pageA/', wpi.pageA),
     path('aJaxTest/', wpi.aJaxTest),
-    # path('pageB/', wpi.pageB),
-    path('windowclose/', wpi.windowclose),
-    re_path(r'pageB/\d+',wpi.pageB),
-    re_path(r'',wpi.pageB),
-
+    path('login/', wpi.pageB),
+    path('layouts/', wpi.layouts),
+    re_path(r'dataview/', wpi.windowclose),
 ]
 
 
