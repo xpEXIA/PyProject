@@ -36,10 +36,15 @@ class test():
         c = self.add() + self.b
         return c
 
+
+
+
+
 if __name__ == '__main__':
 
     a = test(1)
-    c = a.add
-    d = c()
+    b = asd(3)
+    c = b.asd()
+    print(a.__dict__)
+    print(b.__dict__)
     print(c)
-    print(d)
