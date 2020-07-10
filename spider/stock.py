@@ -40,7 +40,25 @@ class StockSpider():
             logging.info('数据保存完毕，保存类型为' + save_type + '保存路径：' + path)
 
 
+
     def _stockRequest(self,data_type,ts_code,start_date,end_date,trade_date,fields):
+
+        """
+
+        :param data_type: {'stock_basic':'股票基本信息',
+                            'daily':'股票日行情数据',
+                            'daily_basic':'股票每日指标数据',
+                            'fund_basic':'基金基本信息',
+                            'fund_nav':'基金每日净值',
+                            '
+        }
+        :param ts_code:
+        :param start_date:
+        :param end_date:
+        :param trade_date:
+        :param fields:
+        :return:
+        """
 
         if data_type == 'stock_basic':
             data = self.pro.query(data_type, exchange='', list_status='L')
@@ -48,6 +66,14 @@ class StockSpider():
             data = self.pro.query(data_type, ts_code=ts_code, start_date=start_date, end_date=end_date)
         elif data_type == 'daily_basic':
             data = self.pro.query(data_type, trade_date=trade_date,fields=fields)
+        elif data_type == 'fund_basic':
+            data = self.pro.fund_basic(market='E')
+        elif data_type == 'fund_nav':
+            data = self.pro.fund_nav(end_date=end_date,market='E')
+        elif data_type == 'fund_daily':
+            data = self.pro.fund_daily(ts_code=ts_code, start_date=start_date, end_date=end_date)
+        elif data_type == 'fund_nav':
+            data = self.pro.fund_portfolio(ts_code=ts_code, start_date=start_date, end_date=end_date)
         else:
             raise ValueError('data_type未知，请使用正确的类型')
 

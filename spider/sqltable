@@ -1,0 +1,16 @@
+CREATE TABLE `stock_basic` (
+	`id` INT NOT NULL,
+	`ts_code` VARCHAR(20) NOT NULL,
+	`symbol` VARCHAR(20) NOT NULL,
+	`name` VARCHAR(150) NULL DEFAULT NULL,
+	`area` VARCHAR(50) NULL DEFAULT NULL,
+	`industry` VARCHAR(50) NULL DEFAULT NULL,
+	`market` VARCHAR(50) NULL DEFAULT NULL,
+	`list_status` VARCHAR(50) NULL DEFAULT NULL,
+	`list_date` VARCHAR(50) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COMMENT='股票基础数据'
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+;
