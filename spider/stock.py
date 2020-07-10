@@ -8,7 +8,9 @@ import pandas as pd
 import pymysql
 import pandas.io.sql as sql
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 import logging
+from time import sleep
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s/%(filename)s[line:%(lineno)d]/%(levelname)s: %(message)s')
 
@@ -22,9 +24,24 @@ class StockSpider():
         self.pro = ts.pro_api(self.token)
 
 
-    def _toSql(self,data,table):
+    def _toSql(self,data,table,if_exists='append'):
 
-        con = create_engine()
+        engine = create_engine("mysql+pymysql://root:root@localhost:3306/stock",encoding='uft8mb4')
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        sql_id = 'select max(id) from ' + table
+        cursor = session.execute(sql_id)
+        start_id = cursor.fetchall()
+        data.to_sql(table,con=engine,index=False,method='multi',if_exists=if_exists)
+        cursor = session.execute(sql_id)
+        end_id = cursor.fetchall()
+        session.close()
+        rows = end_id - start_id
+        if rows == len(data):
+            logging.info('数据在数据库中保存成功且完整')
+        else:
+            raise ValueError('数据在数据库中保存不完整，请手动验证')
+
 
 
     def _data_save(self,data,save_type,table,path=''):
@@ -95,6 +112,7 @@ class StockSpider():
                 break
             except:
                 a += 1
+                sleep(0.14)
                 if a <= 2:
                     logging.error(data_type + '数据获取失败,获取' + str(a) + '次，重新获取')
                 elif a == 3:
