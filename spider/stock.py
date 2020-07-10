@@ -72,7 +72,7 @@ class StockSpider():
             data = self.pro.fund_nav(end_date=end_date,market='E')
         elif data_type == 'fund_daily':
             data = self.pro.fund_daily(ts_code=ts_code, start_date=start_date, end_date=end_date)
-        elif data_type == 'fund_nav':
+        elif data_type == 'fund_portfolio':
             data = self.pro.fund_portfolio(ts_code=ts_code, start_date=start_date, end_date=end_date)
         else:
             raise ValueError('data_type未知，请使用正确的类型')
