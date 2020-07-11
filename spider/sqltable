@@ -8,7 +8,7 @@ CREATE TABLE `stock_basic` (
 	`market` VARCHAR(50) NULL DEFAULT NULL COMMENT '市场类型',
 	`list_status` VARCHAR(50) NULL DEFAULT NULL COMMENT '上市状态：L上市 D退市 P暂停上市',
 	`list_date` DATE NULL DEFAULT NULL COMMENT '上市日期',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`) USING BTREE
 )
 COMMENT='股票基础数据'
 COLLATE='utf8mb4_0900_ai_ci'
@@ -30,8 +30,8 @@ CREATE TABLE `stock_daily` (
 	`pct_chg` FLOAT NULL DEFAULT NULL COMMENT '涨跌幅',
 	`vol` FLOAT NULL DEFAULT NULL COMMENT '成交量(手)',
 	`amount` FLOAT NULL DEFAULT NULL COMMENT '成交额(千元)',
-	PRIMARY KEY (`id`),
-    INDEX `trade_date` (`trade_date`)
+	PRIMARY KEY (`id`) USING BTREE,
+    INDEX `trade_date` (`ts_code`, `trade_date`) USING BTREE
 )
 COMMENT='股票日线行情'
 COLLATE='utf8mb4_0900_ai_ci'
@@ -60,8 +60,8 @@ CREATE TABLE `stock_daily_basic` (
 	`free_share` FLOAT NULL DEFAULT NULL COMMENT '自由流通股本(万)',
 	`total_mv` FLOAT NULL DEFAULT NULL COMMENT '总市值(万元',
 	`circ_mv` FLOAT NULL DEFAULT NULL COMMENT '流通市值(万元)',
-	PRIMARY KEY (`id`),
-	INDEX `trade_date` (`trade_date`)
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `trade_date` (`ts_code`, `trade_date`) USING BTREE
 )
 COMMENT='股票日指标'
 COLLATE='utf8mb4_0900_ai_ci'
@@ -82,7 +82,7 @@ CREATE TABLE `fund_basic` (
 	`issue_amount` FLOAT NOT NULL DEFAULT '0' COMMENT '发行份额(亿)',
 	`m_fee` FLOAT NOT NULL DEFAULT '0' COMMENT '管理费',
 	`type` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '基金类型',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`) USING BTREE
 )
 COMMENT='基金基础数据'
 COLLATE='utf8mb4_0900_ai_ci'
@@ -101,7 +101,8 @@ CREATE TABLE `fund_nav` (
 	`net_asset` FLOAT NOT NULL DEFAULT '0' COMMENT '资产净值',
 	`total_netasset` FLOAT NOT NULL DEFAULT '0' COMMENT '合计资产净值',
 	`daj_nav` FLOAT NOT NULL DEFAULT '0' COMMENT '复权单位净值',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `ts_code` (`ts_code`) USING BTREE
 )
 COMMENT='基金净值数据'
 COLLATE='utf8mb4_0900_ai_ci'
@@ -122,7 +123,8 @@ CREATE TABLE `fund_daily` (
 	`pct_chg` FLOAT NOT NULL DEFAULT '0' COMMENT '涨跌幅',
 	`vol` FLOAT NOT NULL DEFAULT '0' COMMENT '成交量',
 	`amount` FLOAT NOT NULL DEFAULT '0' COMMENT '成交额',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	INDEX `ts_code` (`ts_code`, `trade_date`) USING BTREE
 )
 COMMENT='基金日线行情'
 COLLATE='utf8mb4_0900_ai_ci'
@@ -140,7 +142,8 @@ CREATE TABLE `fund_portfplio` (
 	`amount` FLOAT NOT NULL DEFAULT '0' COMMENT '持有股票数量(股)',
 	`stk_mkv_ratio` FLOAT NOT NULL DEFAULT '0' COMMENT '占股票市值比',
 	`stk_float_ratio` FLOAT NOT NULL DEFAULT '0' COMMENT '占流通股本比例',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `ts_code` (`ts_code`) USING BTREE
 )
 COMMENT='基金持仓'
 COLLATE='utf8mb4_0900_ai_ci'
