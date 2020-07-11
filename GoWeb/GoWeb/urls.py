@@ -26,7 +26,8 @@ urlpatterns = [
     path('aJaxTest/', wpi.aJaxTest),
     path('login/', wpi.pageB),
     path('layouts/', wpi.layouts),
-    re_path(r'dataview/', wpi.windowclose),
+    re_path(r'^$', TemplateView.as_view(template_name="index.html")),
+    re_path(r'^dataview/', include('dataview.urls', namespace='dataview')),
 ]
 
 

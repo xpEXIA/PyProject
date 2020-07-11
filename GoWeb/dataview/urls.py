@@ -3,7 +3,7 @@
 #
 
 from django.urls import path, re_path
-from dataview import views
+from dataview import apps
 
 
 urlpatterns = [
