@@ -156,9 +156,9 @@ class StockSpider():
         logging.info('数据过程中失败的股票代码为' + str(self.fail_list))
 
 
-    def dailyRun(self):
+    def dailyRun(self, date=datetime.now()):
 
-        date_var = datetime.now().strftime('%Y%m%d')
+        date_var = date.strftime('%Y%m%d')
         logging.info('开始获取股票每日行情')
         data = self.stockData(data_type='daily', trade_date=date_var)
         self.data_save(data, table='stock_daily')
@@ -166,7 +166,8 @@ class StockSpider():
         data = self.stockData(data_type='daily_basic', trade_date=date_var)
         self.data_save(data, table='stock_daily_basic')
         logging.info('开始获取基金每日净值')
-        data = self.stockData(data_type='fund_nav', end_date=date_var)
+        date_fund = (date - timedelta(days=1)).strftime('%Y%m%d')
+        data = self.stockData(data_type='fund_nav', end_date=date_fund)
         self.data_save(data, table='fund_nav')
 
         # 获取基金每日行情
@@ -184,14 +185,14 @@ class StockSpider():
         while begin <= len(list):
             if len(list) - begin < 790:
                 code_str = ','.join(list[begin:len(list)])
-                data = self.stockData(data_type='fund_daily', ts_code=code_str, trade_date=date_var)
+                data = self.stockData(data_type='fund_daily', ts_code=code_str, trade_date=date_fund)
                 self.data_save(data, table='fund_daily')
                 break
             else:
                 end = begin + 790
                 code_str = ','.join(list[begin:end])
                 begin = end
-                data = self.stockData(data_type='fund_daily', ts_code=code_str,trade_date=date_var)
+                data = self.stockData(data_type='fund_daily', ts_code=code_str,trade_date=date_fund)
                 self.data_save(data, table='fund_daily')
         logging.info('数据过程中失败的股票代码为' + str(self.fail_list))
 
@@ -263,7 +264,10 @@ class StockSpider():
 if __name__ == '__main__':
 
     stock = StockSpider()
-    stock.initRun(start_date='20110111', end_date='20200710')
+    # stock.dailyRun()
+    # stock.initRun(start_date='20200715', end_date='20200803')
+    stock.daysRun(start_date='20200715', end_date='20200803')
+    # 导入fund_basic数据
     # import pandas as pd
     # pro = ts.pro_api('5ea96f455496951c2719b8b3a8daf621b9c8c2ea7ed9d30041a4c867')
     # data = pro.fund_basic(market='E',fields='ts_code,name,management,fund_type,found_date,due_date,'
